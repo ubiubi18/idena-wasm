@@ -19,52 +19,57 @@ jobs:
           - build: linux-x64
             os: ubuntu-latest
             artifact_name: 'libidena_wasm_linux_amd64.a'
+            target: ''
           - build: macos-x64
             os: macos-latest
             artifact_name: 'libidena_wasm_darwin_amd64.a'
+            target: ''
+          - build: macos-arm64
+            os: macos-latest
+            artifact_name: 'libidena_wasm_darwin_arm64.a'
+            target: aarch64-apple-darwin
           - build: windows-x64
             os: windows-latest
             artifact_name: 'libidena_wasm_windows_amd64.a'
             target: x86_64-pc-windows-gnu
     container: ${{ matrix.container }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
-      - uses: actions-rs/toolchain@v1
-        if: matrix.os != 'windows-latest'
+      - uses: dtolnay/rust-toolchain@stable
+        if: matrix.target == ''
+
+      - uses: dtolnay/rust-toolchain@stable
+        if: matrix.target != ''
         with:
-          toolchain: stable
-          target: ${{ matrix.target }}
+          targets: ${{ matrix.target }}
 
-      - uses: actions-rs/toolchain@v1
+      - name: Install Windows GNU linker
         if: matrix.os == 'windows-latest'
-        with:
-          toolchain: stable-x86_64-pc-windows-gnu
-          target: ${{ matrix.target }}
+        run: choco install -y mingw
 
-      - uses: actions-rs/cargo@v1
-        if: matrix.os == 'windows-latest'
-        with:
-          toolchain: stable-x86_64-pc-windows-gnu
-          command: build
-          args: --release --all-features
-
-      - uses: actions-rs/cargo@v1
-        if: matrix.os != 'windows-latest'
-        with:
-          command: build
-          args: --release --all-features
+      - name: Build
+        run: |
+          target="${{ matrix.target }}"
+          if [[ -n "${target}" ]]; then
+            cargo build --release --all-features --target "${target}"
+          else
+            cargo build --release --all-features
+          fi
 
       - name: Rename output file
         run: |
           asset_name=${{ matrix.artifact_name }}
-          mv target/release/${BINARY_NAME} ${asset_name}
+          if [[ -n "${{ matrix.target }}" ]]; then
+            mv target/${{ matrix.target }}/release/${BINARY_NAME} ${asset_name}
+          else
+            mv target/release/${BINARY_NAME} ${asset_name}
+          fi
           echo "ASSET_NAME=${asset_name}" >> $GITHUB_ENV
       - name: Release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           files: ${{ env.ASSET_NAME }}
 
   linux_aarch64:
@@ -73,10 +78,10 @@ jobs:
     env:
       BINARY_NAME: libidena_wasm.a
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@stable
         with:
-          target: aarch64-unknown-linux-gnu
+          targets: aarch64-unknown-linux-gnu
       - name: Build cross image
         run: |
           docker build -t idena-wasm/aarch64 ${GITHUB_WORKSPACE}/.github/cross-linux-aarch64/
@@ -96,8 +101,7 @@ jobs:
           cp target/aarch64-unknown-linux-gnu/release/${BINARY_NAME} ${asset_name}
           echo "ASSET_NAME=${asset_name}" >> $GITHUB_ENV
       - name: Release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           files: ${{ env.ASSET_NAME }}
