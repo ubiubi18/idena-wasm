@@ -8,4 +8,4 @@ RUN cargo install cross
 RUN dpkg --add-architecture arm64 && \
     apt-get update && \
     apt-get install -qy curl && \
-    curl -sSL https://get.docker.com/ | sh
+    curl --proto '=https' --tlsv1.2 -sSfL https://get.docker.com/ | sh
