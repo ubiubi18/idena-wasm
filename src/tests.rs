@@ -7,7 +7,11 @@ static CONTRACT_ERC20: &[u8] = include_bytes!("../testdata/erc20.wasm");
 
 #[test]
 fn test_deploy_erc20() {
-    let mock_backed = crate::backend::MockBackend {};
+    let mock_backend = crate::backend::MockBackend {};
     let mut gas_used = 0;
-    assert!(crate::runner::VmRunner::deploy_with_env(mock_backed, CONTRACT_ERC20.to_vec(), protobuf::RepeatedField::new(), 100000, &mut gas_used).is_ok());
+    let runner = crate::runner::VmRunner::new(mock_backend, vec![], 10_000_000, None, true);
+
+    let result = runner.deploy(CONTRACT_ERC20.to_vec(), &[1], &mut gas_used);
+
+    assert!(result.success, "deploy failed: {}", result.error);
 }
