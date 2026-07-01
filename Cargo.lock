@@ -144,62 +144,69 @@ dependencies = [
 
 [[package]]
 name = "cranelift-bforest"
-version = "0.82.3"
+version = "0.85.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38faa2a16616c8e78a18d37b4726b98bfd2de192f2fdc8a39ddf568a408a0f75"
+checksum = "749d0d6022c9038dccf480bdde2a38d435937335bf2bb0f14e815d94517cdce8"
 dependencies = [
  "cranelift-entity",
 ]
 
 [[package]]
 name = "cranelift-codegen"
-version = "0.82.3"
+version = "0.85.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "26f192472a3ba23860afd07d2b0217dc628f21fcc72617aa1336d98e1671f33b"
+checksum = "e94370cc7b37bf652ccd8bb8f09bd900997f7ccf97520edfc75554bb5c4abbea"
 dependencies = [
  "cranelift-bforest",
  "cranelift-codegen-meta",
  "cranelift-codegen-shared",
  "cranelift-entity",
+ "cranelift-isle",
  "gimli 0.26.2",
  "log",
- "regalloc",
+ "regalloc2",
  "smallvec",
  "target-lexicon",
 ]
 
 [[package]]
 name = "cranelift-codegen-meta"
-version = "0.82.3"
+version = "0.85.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f32ddb89e9b89d3d9b36a5b7d7ea3261c98235a76ac95ba46826b8ec40b1a24"
+checksum = "e0a3cea8fdab90e44018c5b9a1dfd460d8ee265ac354337150222a354628bdb6"
 dependencies = [
  "cranelift-codegen-shared",
 ]
 
 [[package]]
 name = "cranelift-codegen-shared"
-version = "0.82.3"
+version = "0.85.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "01fd0d9f288cc1b42d9333b7a776b17e278fc888c28e6a0f09b5573d45a150bc"
+checksum = "5ac72f76f2698598951ab26d8c96eaa854810e693e7dd52523958b5909fde6b2"
 
 [[package]]
 name = "cranelift-entity"
-version = "0.82.3"
+version = "0.85.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e3bfe172b83167604601faf9dc60453e0d0a93415b57a9c4d1a7ae6849185cf"
+checksum = "09eaeacfcd2356fe0e66b295e8f9d59fdd1ac3ace53ba50de14d628ec902f72d"
 
 [[package]]
 name = "cranelift-frontend"
-version = "0.82.3"
+version = "0.85.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a006e3e32d80ce0e4ba7f1f9ddf66066d052a8c884a110b91d05404d6ce26dce"
+checksum = "dba69c9980d5ffd62c18a2bde927855fcd7c8dc92f29feaf8636052662cbd99c"
 dependencies = [
  "cranelift-codegen",
  "log",
  "smallvec",
  "target-lexicon",
 ]
+
+[[package]]
+name = "cranelift-isle"
+version = "0.85.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d2920dc1e05cac40304456ed3301fde2c09bd6a9b0210bcfa2f101398d628d5b"
 
 [[package]]
 name = "crc32fast"
@@ -384,6 +391,15 @@ dependencies = [
  "futures-task",
  "pin-project-lite",
  "slab",
+]
+
+[[package]]
+name = "fxhash"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c31b6d751ae2c7f11320402d34e41349dd1016f8d5d45e48c4312bc8625af50c"
+dependencies = [
+ "byteorder",
 ]
 
 [[package]]
@@ -764,13 +780,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "regalloc"
-version = "0.0.34"
+name = "regalloc2"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62446b1d3ebf980bdc68837700af1d77b37bc430e524bf95319c6eada2a4cc02"
+checksum = "4a8d23b35d7177df3b9d31ed8a9ab4bf625c668be77a319d4f5efd4a5257701c"
 dependencies = [
+ "fxhash",
  "log",
- "rustc-hash",
+ "slice-group-by",
  "smallvec",
 ]
 
@@ -829,12 +846,6 @@ name = "rustc-demangle"
 version = "0.1.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b50b8869d9fc858ce7266cce0194bd74df58b9d0e3f6df3a9fc8eb470d95c09d"
-
-[[package]]
-name = "rustc-hash"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
 
 [[package]]
 name = "rustix"
@@ -943,6 +954,12 @@ name = "slab"
 version = "0.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+
+[[package]]
+name = "slice-group-by"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "826167069c09b99d56f31e9ae5c99049e932a98c9dc2dac47645b08dbbf76ba7"
 
 [[package]]
 name = "smallvec"
@@ -1182,7 +1199,7 @@ dependencies = [
 [[package]]
 name = "wasmer"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "cfg-if",
  "indexmap 1.9.3",
@@ -1207,7 +1224,7 @@ dependencies = [
 [[package]]
 name = "wasmer-artifact"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "enumset",
  "loupe",
@@ -1219,7 +1236,7 @@ dependencies = [
 [[package]]
 name = "wasmer-compiler"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "enumset",
  "loupe",
@@ -1236,7 +1253,7 @@ dependencies = [
 [[package]]
 name = "wasmer-compiler-cranelift"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "cranelift-codegen",
  "cranelift-entity",
@@ -1255,7 +1272,7 @@ dependencies = [
 [[package]]
 name = "wasmer-derive"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1265,7 +1282,7 @@ dependencies = [
 [[package]]
 name = "wasmer-engine"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "backtrace",
  "enumset",
@@ -1287,7 +1304,7 @@ dependencies = [
 [[package]]
 name = "wasmer-engine-dylib"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "cfg-if",
  "enum-iterator",
@@ -1312,7 +1329,7 @@ dependencies = [
 [[package]]
 name = "wasmer-engine-universal"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "cfg-if",
  "enumset",
@@ -1331,7 +1348,7 @@ dependencies = [
 [[package]]
 name = "wasmer-engine-universal-artifact"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "enum-iterator",
  "enumset",
@@ -1346,7 +1363,7 @@ dependencies = [
 [[package]]
 name = "wasmer-middlewares"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "loupe",
  "wasmer",
@@ -1357,7 +1374,7 @@ dependencies = [
 [[package]]
 name = "wasmer-object"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "object 0.28.4",
  "thiserror 1.0.69",
@@ -1368,7 +1385,7 @@ dependencies = [
 [[package]]
 name = "wasmer-types"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "backtrace",
  "enum-iterator",
@@ -1383,7 +1400,7 @@ dependencies = [
 [[package]]
 name = "wasmer-vm"
 version = "2.3.0"
-source = "git+https://github.com/ubiubi18/wasmer?rev=b5d5312a928def9d087186a63551641eabb36861#b5d5312a928def9d087186a63551641eabb36861"
+source = "git+https://github.com/ubiubi18/wasmer?rev=927d848b8867e9d4c2030937144cfc940141b0e1#927d848b8867e9d4c2030937144cfc940141b0e1"
 dependencies = [
  "backtrace",
  "cc",
