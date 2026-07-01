@@ -1,9 +1,9 @@
 use loupe::MemoryUsage;
+use wasmer::wasmparser::Operator;
 use wasmer::{
     FunctionMiddleware, LocalFunctionIndex, MiddlewareError, MiddlewareReaderState,
     ModuleMiddleware,
 };
-use wasmer::wasmparser::Operator;
 
 #[derive(Debug, MemoryUsage, Clone, Copy)]
 struct GatekeeperConfig {
@@ -13,8 +13,8 @@ struct GatekeeperConfig {
     /// any combination of `allow_floats` and `allow_feature_simd` properly.
     allow_floats: bool,
     //
-// Standardized features
-//
+    // Standardized features
+    //
     /// True iff operations of the "Bulk memory operations" feature are allowed.
     /// See <https://webassembly.org/roadmap/> and <https://github.com/WebAssembly/bulk-memory-operations/blob/master/proposals/bulk-memory-operations/Overview.md>.
     allow_feature_bulk_memory_operations: bool,
@@ -25,8 +25,8 @@ struct GatekeeperConfig {
     /// See <https://webassembly.org/roadmap/> and <https://github.com/WebAssembly/simd/blob/master/proposals/simd/SIMD.md>.
     allow_feature_simd: bool,
     //
-// In-progress proposals
-//
+    // In-progress proposals
+    //
     /// True iff operations of the "Exception handling" feature are allowed.
     /// Note, this feature is not yet standardized!
     /// See <https://webassembly.org/roadmap/> and <https://github.com/WebAssembly/exception-handling/blob/master/proposals/exception-handling/Exceptions.md>.
@@ -689,7 +689,8 @@ impl FunctionMiddleware for FunctionGatekeeper {
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
-    use wasmer::{CompilerConfig, Cranelift, Module, Store, Universal};
+    use wasmer::{CompilerConfig, Module, Store, Universal};
+    use wasmer_compiler_singlepass::Singlepass;
 
     use super::*;
 
@@ -705,10 +706,10 @@ i32.add
 ))
 "#,
         )
-            .unwrap();
+        .unwrap();
 
         let deterministic = Arc::new(Gatekeeper::default());
-        let mut compiler_config = Cranelift::default();
+        let mut compiler_config = Singlepass::default();
         compiler_config.push_middleware(deterministic);
         let store = Store::new(&Universal::new(compiler_config).engine());
         let result = Module::new(&store, &wasm);
@@ -726,10 +727,10 @@ f32.convert_i32_u
 ))
 "#,
         )
-            .unwrap();
+        .unwrap();
 
         let deterministic = Arc::new(Gatekeeper::default());
-        let mut compiler_config = Cranelift::default();
+        let mut compiler_config = Singlepass::default();
         compiler_config.push_middleware(deterministic);
         let store = Store::new(&Universal::new(compiler_config).engine());
         let result = Module::new(&store, &wasm);
@@ -753,10 +754,10 @@ memory.copy
 local.get $dst))
 "#,
         )
-            .unwrap();
+        .unwrap();
 
         let deterministic = Arc::new(Gatekeeper::default());
-        let mut compiler_config = Cranelift::default();
+        let mut compiler_config = Singlepass::default();
         compiler_config.push_middleware(deterministic);
         let store = Store::new(&Universal::new(compiler_config).engine());
         let result = Module::new(&store, &wasm);

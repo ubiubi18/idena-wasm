@@ -5,8 +5,9 @@ use indexmap::map::Iter;
 use protobuf::Message;
 use wasmer::{
     imports, BaseTunables, ChainableNamedResolver, CompilerConfig, ExportIndex, Function, Instance,
-    Cranelift, Module, Pages, Store, Target, Val, Value,
+    Module, Pages, Store, Target, Val, Value,
 };
+use wasmer_compiler_singlepass::Singlepass;
 use wasmer_engine_universal::Universal;
 use wasmer_middlewares::Metering;
 use wasmer_types::ModuleInfo;
@@ -107,7 +108,7 @@ impl<B: Backend + 'static> VmRunner<B> {
         promise_result: Option<PromiseResult>,
     ) -> VmResult<(Env<B>, Module)> {
         let metering = Arc::new(Metering::new(self.gas_limit, cost_function));
-        let mut compiler_config = Cranelift::default();
+        let mut compiler_config = Singlepass::default();
         compiler_config.push_middleware(metering);
         compiler_config.push_middleware(Arc::new(Gatekeeper::default()));
         let base = BaseTunables::for_target(&Target::default());
