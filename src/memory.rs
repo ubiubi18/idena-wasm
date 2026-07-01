@@ -1,10 +1,10 @@
 use std::any::type_name;
-use std::fmt::{Debug};
+use std::fmt::Debug;
 use std::slice;
 
-use wasmer::{Array, ValueType, WasmPtr};
-use byteorder::ByteOrder;
 use crate::errors::VmError;
+use byteorder::ByteOrder;
+use wasmer::{Array, ValueType, WasmPtr};
 
 #[repr(C)]
 #[derive(Default, Clone, Copy, Debug)]
@@ -21,30 +21,35 @@ pub type CommunicationResult<T> = core::result::Result<T, VmError>;
 pub type RegionValidationResult<T> = core::result::Result<T, VmError>;
 pub type VmResult<T> = core::result::Result<T, VmError>;
 
-
 unsafe impl ValueType for Region {}
 
 /// Safely converts input of type &T to u32.
 /// Errors with a cosmwasm_vm::errors::VmError::ConversionErr if conversion cannot be done.
 pub fn ref_to_u32<T: TryInto<u32> + ToString + Clone>(input: &T) -> VmResult<u32> {
     input.clone().try_into().map_err(|_| {
-        VmError::custom(format!("Couldn't convert from {} to {}. Input: {}", type_name::<T>(), type_name::<u32>(), input.to_string()))
+        VmError::custom(format!(
+            "Couldn't convert from {} to {}. Input: {}",
+            type_name::<T>(),
+            type_name::<u32>(),
+            input.to_string()
+        ))
     })
 }
 
 pub fn to_u32<T: std::convert::TryInto<u32> + ToString + Copy>(input: T) -> VmResult<u32> {
-    input.try_into().map_err(|_| {
-        VmError::custom("conversion err")
-    })
+    input
+        .try_into()
+        .map_err(|_| VmError::custom("conversion err"))
 }
 
 pub fn read_region(memory: &wasmer::Memory, ptr: u32, max_length: usize) -> VmResult<Vec<u8>> {
     let region = get_region(memory, ptr)?;
 
     if region.length > to_u32(max_length)? {
-        return Err(
-            VmError::custom(format!("region_length_too_big: ptr={} expected max = {}, actual={}", ptr, max_length, region.length))
-        );
+        return Err(VmError::custom(format!(
+            "region_length_too_big: ptr={} expected max = {}, actual={}",
+            ptr, max_length, region.length
+        )));
     }
 
     match WasmPtr::<u8, Array>::new(region.offset).deref(memory, 0, region.length) {
@@ -65,7 +70,6 @@ pub fn read_region(memory: &wasmer::Memory, ptr: u32, max_length: usize) -> VmRe
         ))),
     }
 }
-
 
 /// A prepared and sufficiently large memory Region is expected at ptr that points to pre-allocated memory.
 ///
@@ -105,21 +109,25 @@ fn get_region(memory: &wasmer::Memory, ptr: u32) -> CommunicationResult<Region> 
             validate_region(&region)?;
             Ok(region)
         }
-        None => Err(VmError::custom("Could not dereference this pointer to a Region"))
+        None => Err(VmError::custom(
+            "Could not dereference this pointer to a Region",
+        )),
     }
 }
 
 pub fn read_u32(memory: &wasmer::Memory, ptr: u32) -> CommunicationResult<u32> {
     let wptr: WasmPtr<u32> = WasmPtr::<u32>::new(ptr);
     match wptr.deref(memory) {
-        Some(cell) => {
-            Ok(cell.get())
-        }
-        None => Err(VmError::custom("Could not dereference this pointer to u32"))
+        Some(cell) => Ok(cell.get()),
+        None => Err(VmError::custom("Could not dereference this pointer to u32")),
     }
 }
 
-fn get_utf18_string(ptr: WasmPtr<u8, Array>, memory: &wasmer::Memory, str_len: u32) -> Option<String> {
+fn get_utf18_string(
+    ptr: WasmPtr<u8, Array>,
+    memory: &wasmer::Memory,
+    str_len: u32,
+) -> Option<String> {
     let memory_size = memory.size().bytes().0;
     if ptr.offset() as usize + str_len as usize > memory.size().bytes().0
         || ptr.offset() as usize >= memory_size
@@ -144,17 +152,20 @@ fn get_utf18_string(ptr: WasmPtr<u8, Array>, memory: &wasmer::Memory, str_len: u
     String::from_utf16(&u16_buffer).ok()
 }
 
-pub fn read_utf16_string(memory: &wasmer::Memory, ptr: u32, len: u32) -> CommunicationResult<String> {
+pub fn read_utf16_string(
+    memory: &wasmer::Memory,
+    ptr: u32,
+    len: u32,
+) -> CommunicationResult<String> {
     let wptr: WasmPtr<u8, Array> = WasmPtr::<u8, Array>::new(ptr);
 
     match get_utf18_string(wptr, &memory, len) {
-        Some(v) => {
-            Ok(v)
-        }
-        None => Err(VmError::custom("Could not dereference this pointer to [u8]"))
+        Some(v) => Ok(v),
+        None => Err(VmError::custom(
+            "Could not dereference this pointer to [u8]",
+        )),
     }
 }
-
 
 /// Performs plausibility checks in the given Region. Regions are always created by the
 /// contract and this can be used to detect problems in the standard library of the contract.
@@ -181,7 +192,7 @@ fn set_region(memory: &wasmer::Memory, ptr: u32, data: Region) -> CommunicationR
             Ok(())
         }
         None => Err(VmError::custom(
-            "Could not dereference this pointer to a Region"
+            "Could not dereference this pointer to a Region",
         )),
     }
 }

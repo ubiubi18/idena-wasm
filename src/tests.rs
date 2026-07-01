@@ -1,9 +1,6 @@
 #![allow(dead_code)]
 
-
 static CONTRACT_ERC20: &[u8] = include_bytes!("../testdata/erc20.wasm");
-
-
 
 #[test]
 fn test_deploy_erc20() {

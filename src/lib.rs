@@ -1,17 +1,17 @@
+mod args;
+mod backend;
+mod costs;
 mod environment;
 mod errors;
-mod memory;
 mod exports;
-mod runner;
-mod imports;
-mod backend;
-mod go;
 mod gatekeeper;
-mod proto;
-mod costs;
+mod go;
+mod imports;
 mod limiting_tunables;
-mod types;
-mod args;
+mod macros;
+mod memory;
+mod proto;
+mod runner;
 #[cfg(test)]
 mod tests;
-mod macros;
+mod types;

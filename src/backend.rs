@@ -14,16 +14,14 @@ impl Display for BackendError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             BackendError::Custom { msg } => write!(f, "{}", msg),
-            BackendError::OutOfGas => write!(f, "out_of_gas")
+            BackendError::OutOfGas => write!(f, "out_of_gas"),
         }
     }
 }
 
 impl BackendError {
     pub fn new(msg: impl Into<String>) -> Self {
-        BackendError::Custom {
-            msg: msg.into()
-        }
+        BackendError::Custom { msg: msg.into() }
     }
 
     pub fn out_of_gas() -> Self {
@@ -44,28 +42,48 @@ pub trait Backend: Copy + Clone + Send {
     fn balance(&self) -> BackendResult<IDNA>;
     fn block_seed(&self) -> BackendResult<Vec<u8>>;
     fn network_size(&self) -> BackendResult<u64>;
-    fn burn(&self, amount : IDNA) -> BackendResult<()>;
+    fn burn(&self, amount: IDNA) -> BackendResult<()>;
     fn read_contract_data(&self, addr: Address, key: Vec<u8>) -> BackendResult<Option<Vec<u8>>>;
     fn epoch(&self) -> BackendResult<u16>;
     fn identity(&self, addr: Address) -> BackendResult<Option<Vec<u8>>>;
-    fn call(&self, addr: Address, method: &[u8], args: &[u8], amount: &[u8], gas_limit: u64, invocation_ctx: &[u8]) -> BackendResult<ActionResult>;
+    fn call(
+        &self,
+        addr: Address,
+        method: &[u8],
+        args: &[u8],
+        amount: &[u8],
+        gas_limit: u64,
+        invocation_ctx: &[u8],
+    ) -> BackendResult<ActionResult>;
     fn caller(&self) -> BackendResult<Vec<u8>>;
     fn original_caller(&self) -> BackendResult<Vec<u8>>;
     //fn commit(&self) -> BackendResult<()>;
     fn deduct_balance(&self, amount: IDNA) -> BackendResult<()>;
-    fn add_balance(&self, to: Address, amount: IDNA) ->u64;
+    fn add_balance(&self, to: Address, amount: IDNA) -> u64;
     fn own_addr(&self) -> BackendResult<Address>;
-    fn contract_addr(&self, code:  &[u8], args: &[u8], nonce: &[u8]) -> BackendResult<Address>;
-    fn deploy(&self, code : &[u8], args: &[u8], nonce: &[u8], amount: &[u8], gas_limit: u64) -> BackendResult<ActionResult>;
-    fn contract_addr_by_hash(&self, hash:  &[u8], args: &[u8], nonce: &[u8]) -> BackendResult<Address>;
+    fn contract_addr(&self, code: &[u8], args: &[u8], nonce: &[u8]) -> BackendResult<Address>;
+    fn deploy(
+        &self,
+        code: &[u8],
+        args: &[u8],
+        nonce: &[u8],
+        amount: &[u8],
+        gas_limit: u64,
+    ) -> BackendResult<ActionResult>;
+    fn contract_addr_by_hash(
+        &self,
+        hash: &[u8],
+        args: &[u8],
+        nonce: &[u8],
+    ) -> BackendResult<Address>;
     fn own_code(&self) -> BackendResult<Vec<u8>>;
     fn code_hash(&self) -> BackendResult<Vec<u8>>;
-    fn event(&self, event_name : &[u8], args : &[u8]) -> BackendResult<()>;
+    fn event(&self, event_name: &[u8], args: &[u8]) -> BackendResult<()>;
     fn pay_amount(&self) -> BackendResult<IDNA>;
-    fn block_header(&self, height : u64) -> BackendResult<Option<Vec<u8>>>;
+    fn block_header(&self, height: u64) -> BackendResult<Option<Vec<u8>>>;
     fn keccak256(&self, data: &[u8]) -> BackendResult<Vec<u8>>;
     fn global_state(&self) -> BackendResult<Vec<u8>>;
-    fn ecrecover(&self, data : &[u8], sig : &[u8]) -> BackendResult<Vec<u8>>;
+    fn ecrecover(&self, data: &[u8], sig: &[u8]) -> BackendResult<Vec<u8>>;
 }
 
 #[cfg(test)]
@@ -142,7 +160,15 @@ impl Backend for MockBackend {
         todo!()
     }
 
-    fn call(&self, addr: Address, method: &[u8], args: &[u8], amount: &[u8], gas_limit: u64, invocation_ctx: &[u8]) -> BackendResult<ActionResult> {
+    fn call(
+        &self,
+        addr: Address,
+        method: &[u8],
+        args: &[u8],
+        amount: &[u8],
+        gas_limit: u64,
+        invocation_ctx: &[u8],
+    ) -> BackendResult<ActionResult> {
         todo!()
     }
 
@@ -169,11 +195,23 @@ impl Backend for MockBackend {
         todo!()
     }
 
-    fn deploy(&self, code: &[u8], args: &[u8], nonce: &[u8], amount: &[u8], gas_limit: u64) -> BackendResult<ActionResult> {
+    fn deploy(
+        &self,
+        code: &[u8],
+        args: &[u8],
+        nonce: &[u8],
+        amount: &[u8],
+        gas_limit: u64,
+    ) -> BackendResult<ActionResult> {
         todo!()
     }
 
-    fn contract_addr_by_hash(&self, hash: &[u8], args: &[u8], nonce: &[u8]) -> BackendResult<Address> {
+    fn contract_addr_by_hash(
+        &self,
+        hash: &[u8],
+        args: &[u8],
+        nonce: &[u8],
+    ) -> BackendResult<Address> {
         todo!()
     }
 
