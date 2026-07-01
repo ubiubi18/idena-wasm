@@ -20,7 +20,7 @@ use crate::gatekeeper::*;
 use crate::imports::*;
 use crate::limiting_tunables::LimitingTunables;
 use crate::memory::{read_region, VmResult};
-use crate::proto::models::{InvocationContext as protoContext, ProtoArgs_Argument};
+use crate::proto::models::{proto_args, InvocationContext as protoContext};
 use crate::types::PromiseResult::Failed;
 use crate::types::{
     Action, ActionResult, Address, DeployContractAction, FunctionCallAction, Gas,
@@ -59,7 +59,7 @@ impl<B: Backend + 'static> VmRunner<B> {
         env: &Env<B>,
         info: &ModuleInfo,
         method: &String,
-        args: protobuf::RepeatedField<ProtoArgs_Argument>,
+        args: Vec<proto_args::Argument>,
     ) -> VmResult<Vec<Val>> {
         let params_cnt: usize;
         if self.is_debug {
@@ -85,11 +85,11 @@ impl<B: Backend + 'static> VmRunner<B> {
 
         let mut wasm_args = Vec::new();
         for v in args.iter() {
-            if v.get_is_nil() {
+            if v.is_nil {
                 wasm_args.push(Value::I32(0));
                 continue;
             }
-            match write_to_contract(&env.clone(), v.get_value()) {
+            match write_to_contract(&env.clone(), &v.value) {
                 Ok(p) => wasm_args.push(Value::I32(i32::try_from(p).unwrap())),
                 Err(err) => return Err(err),
             }
@@ -220,12 +220,10 @@ impl<B: Backend + 'static> VmRunner<B> {
             Action::None => 0,
             Action::DeployContract(d) => d.gas_limit,
             Action::FunctionCall(c) => c.gas_limit,
-            Action::ReadShardedData(r) => {
-                match r {
-                    ReadShardedDataAction::ReadContractData(rcd) => rcd.gas_limit,
-                    ReadShardedDataAction::GetIdentity(gi) => gi.gas_limit,
-                }
-            }
+            Action::ReadShardedData(r) => match r {
+                ReadShardedDataAction::ReadContractData(rcd) => rcd.gas_limit,
+                ReadShardedDataAction::GetIdentity(gi) => gi.gas_limit,
+            },
             Action::Transfer(_) => 0,
         };
     }

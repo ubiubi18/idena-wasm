@@ -1,4 +1,7 @@
-use crate::proto::models::{Action as protoAction, ActionResult as protoActionResult, InvocationContext as protoContext, PromiseResult as protoPromiseResult};
+use crate::proto::models::{
+    Action as protoAction, ActionResult as protoActionResult, InvocationContext as protoContext,
+    PromiseResult as protoPromiseResult,
+};
 
 pub const ACTION_FUNCTION_CALL: u8 = 1;
 pub const ACTION_TRANSFER: u8 = 2;
@@ -60,7 +63,6 @@ pub enum ReadShardedDataAction {
     GetIdentity(GetIdentityAction),
 }
 
-
 /*pub struct OutputData {
     pub data_id: Hash,
     pub data: Vec<u8>,
@@ -96,7 +98,7 @@ pub struct ActionResult {
 impl Into<protoActionResult> for &ActionResult {
     fn into(self) -> protoActionResult {
         let mut proto = protoActionResult::default();
-        proto.set_input_action((&self.input_action).into());
+        proto.input_action = protobuf::MessageField::some((&self.input_action).into());
         proto.gas_used = self.gas_used;
         proto.output_data = self.output_data.clone();
         proto.success = self.success;
@@ -118,7 +120,11 @@ impl From<protoActionResult> for ActionResult {
             success: action_res.success,
             remaining_gas: action_res.remaining_gas,
             gas_used: action_res.gas_used,
-            sub_action_results: action_res.sub_action_results.into_iter().map(|a| a.into()).collect(),
+            sub_action_results: action_res
+                .sub_action_results
+                .into_iter()
+                .map(|a| a.into())
+                .collect(),
             error: action_res.error,
             output_data: action_res.output_data,
             contract: action_res.contract,
@@ -126,20 +132,18 @@ impl From<protoActionResult> for ActionResult {
     }
 }
 
-
 impl Into<protoAction> for &Action {
     fn into(self) -> protoAction {
         match self {
-            Action::FunctionCall(call) =>
-                {
-                    let mut proto = protoAction::default();
-                    proto.action_type = ACTION_FUNCTION_CALL as u32;
-                    proto.method = call.method_name.clone();
-                    proto.amount = call.deposit.clone();
-                    proto.args = call.args.clone();
-                    proto.gas_limit = call.gas_limit;
-                    proto
-                }
+            Action::FunctionCall(call) => {
+                let mut proto = protoAction::default();
+                proto.action_type = ACTION_FUNCTION_CALL as u32;
+                proto.method = call.method_name.clone();
+                proto.amount = call.deposit.clone();
+                proto.args = call.args.clone();
+                proto.gas_limit = call.gas_limit;
+                proto
+            }
             Action::DeployContract(deploy) => {
                 let mut proto = protoAction::default();
                 proto.action_type = ACTION_DEPLOY_CONTRACT as u32;
@@ -173,7 +177,7 @@ impl Into<protoAction> for &Action {
                 }
                 proto
             }
-            _ => protoAction::default()
+            _ => protoAction::default(),
         }
     }
 }
@@ -181,37 +185,37 @@ impl Into<protoAction> for &Action {
 impl From<protoAction> for Action {
     fn from(action: protoAction) -> Self {
         match action.action_type as u8 {
-            ACTION_FUNCTION_CALL => {
-                Action::FunctionCall(FunctionCallAction {
-                    gas_limit: action.gas_limit,
-                    args: action.args,
-                    method_name: action.method,
-                    deposit: action.amount,
-                })
-            }
+            ACTION_FUNCTION_CALL => Action::FunctionCall(FunctionCallAction {
+                gas_limit: action.gas_limit,
+                args: action.args,
+                method_name: action.method,
+                deposit: action.amount,
+            }),
 
-            ACTION_DEPLOY_CONTRACT => {
-                Action::DeployContract(DeployContractAction {
-                    gas_limit: action.gas_limit,
-                    args: action.args,
-                    code: action.code,
-                    deposit: action.amount,
-                    nonce: action.nonce,
-                })
-            }
+            ACTION_DEPLOY_CONTRACT => Action::DeployContract(DeployContractAction {
+                gas_limit: action.gas_limit,
+                args: action.args,
+                code: action.code,
+                deposit: action.amount,
+                nonce: action.nonce,
+            }),
 
             ACTION_TRANSFER => Action::Transfer(TransferAction {
                 amount: action.amount,
             }),
-            ACTION_READ_CONTRACT_DATA => Action::ReadShardedData(ReadShardedDataAction::ReadContractData(ReadContractDataAction {
-                key: action.key,
-                gas_limit: action.gas_limit,
-            })),
-            ACTION_READ_IDENTITY => Action::ReadShardedData(ReadShardedDataAction::GetIdentity(GetIdentityAction {
-                addr: action.key,
-                gas_limit: action.gas_limit,
-            })),
-            _ => Action::None
+            ACTION_READ_CONTRACT_DATA => Action::ReadShardedData(
+                ReadShardedDataAction::ReadContractData(ReadContractDataAction {
+                    key: action.key,
+                    gas_limit: action.gas_limit,
+                }),
+            ),
+            ACTION_READ_IDENTITY => {
+                Action::ReadShardedData(ReadShardedDataAction::GetIdentity(GetIdentityAction {
+                    addr: action.key,
+                    gas_limit: action.gas_limit,
+                }))
+            }
+            _ => Action::None,
         }
     }
 }
@@ -221,7 +225,6 @@ impl Default for Action {
         Action::None
     }
 }
-
 
 impl ActionResult {
     pub(crate) fn append_sub_action_results(&mut self, results: Vec<ActionResult>) {
@@ -265,12 +268,10 @@ impl Into<protoPromiseResult> for &PromiseResult {
     fn into(self) -> protoPromiseResult {
         let mut res = protoPromiseResult::default();
         match self {
-            PromiseResult::Empty => {
-                res.success = true
-            }
+            PromiseResult::Empty => res.success = true,
             PromiseResult::Value(val) => {
                 res.success = true;
-                res.set_data(val.clone());
+                res.data = val.clone();
             }
             PromiseResult::Failed => {
                 res.success = false;
@@ -294,7 +295,7 @@ impl Into<protoContext> for InvocationContext {
         let mut ctx = protoContext::default();
         ctx.is_callback = self.is_callback;
         match self.promise_result {
-            Some(v) => ctx.set_promise_result((&v).into()),
+            Some(v) => ctx.promise_result = protobuf::MessageField::some((&v).into()),
             _ => {}
         }
         ctx
@@ -309,12 +310,3 @@ impl Default for InvocationContext {
         }
     }
 }
-
-
-
-
-
-
-
-
-
