@@ -11,11 +11,11 @@ crate-type = ["staticlib"]
 [dependencies]
 byteorder = "1.5"
 thiserror = "2.0"
-wasmer = { git = "https://github.com/ubiubi18/wasmer", rev = "5efc0075747b35dced20bf843fc72c49fdd0ba3b", default-features = false, features = ["compiler", "universal"] }
-wasmer-compiler-singlepass = { git = "https://github.com/ubiubi18/wasmer", rev = "5efc0075747b35dced20bf843fc72c49fdd0ba3b" }
-wasmer-types = { git = "https://github.com/ubiubi18/wasmer", rev = "5efc0075747b35dced20bf843fc72c49fdd0ba3b" }
-wasmer-middlewares = { git = "https://github.com/ubiubi18/wasmer", rev = "5efc0075747b35dced20bf843fc72c49fdd0ba3b" }
-wasmer-engine-universal = { git = "https://github.com/ubiubi18/wasmer", rev = "5efc0075747b35dced20bf843fc72c49fdd0ba3b" }
+wasmer = { git = "https://github.com/ubiubi18/wasmer", rev = "db37fef8ff851af17d460e5d58712c7ae14f5351", default-features = false, features = ["compiler", "universal"] }
+wasmer-compiler-singlepass = { git = "https://github.com/ubiubi18/wasmer", rev = "db37fef8ff851af17d460e5d58712c7ae14f5351" }
+wasmer-types = { git = "https://github.com/ubiubi18/wasmer", rev = "db37fef8ff851af17d460e5d58712c7ae14f5351" }
+wasmer-middlewares = { git = "https://github.com/ubiubi18/wasmer", rev = "db37fef8ff851af17d460e5d58712c7ae14f5351" }
+wasmer-engine-universal = { git = "https://github.com/ubiubi18/wasmer", rev = "db37fef8ff851af17d460e5d58712c7ae14f5351" }
 loupe = "0.1.3"
 protobuf = "3.7.2"
 indexmap = "1.9"
