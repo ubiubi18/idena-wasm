@@ -270,32 +270,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dynasm"
-version = "1.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "add9a102807b524ec050363f09e06f1504214b0e1c7797f64261c891022dce8b"
-dependencies = [
- "bitflags 1.3.2",
- "byteorder",
- "lazy_static",
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "dynasmrt"
-version = "1.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64fba5a42bd76a17cad4bfa00de168ee1cbfa06a5e8ce992ae880218c05641a9"
-dependencies = [
- "byteorder",
- "dynasm",
- "memmap2",
-]
-
-[[package]]
 name = "either"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -619,15 +593,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mach"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b823e83b2affd8f40a9ee8c29dbc56404c1e34cd2710921f2801e2cf29527afa"
-dependencies = [
- "libc",
-]
-
-[[package]]
 name = "mach2"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -644,9 +609,9 @@ checksum = "88904434abc2901f197fe8cc55f0445e7ded921dba5911dad2e2b39b48e663c4"
 
 [[package]]
 name = "memmap2"
-version = "0.5.10"
+version = "0.9.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "83faa42c0a078c393f6b29d5db232d8be22776a891f8f56e5284faee4a20b327"
+checksum = "d1219ed1b7f229ee7104d281dd01d6802fe28bb6e95d292942c4daacdeb798c0"
 dependencies = [
  "libc",
 ]
@@ -707,30 +672,6 @@ name = "pin-project-lite"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
-
-[[package]]
-name = "proc-macro-error"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da25490ff9892aab3fcf7c36f08cfb902dd3e71ca0f9f9517bea02a73a5ce38c"
-dependencies = [
- "proc-macro-error-attr",
- "proc-macro2",
- "quote",
- "syn 1.0.109",
- "version_check",
-]
-
-[[package]]
-name = "proc-macro-error-attr"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1be40180e52ecc98ad80b184934baf3d0d29f979574e439af5a55274b35f869"
-dependencies = [
- "proc-macro2",
- "quote",
- "version_check",
-]
 
 [[package]]
 name = "proc-macro2"
@@ -1241,7 +1182,7 @@ dependencies = [
 [[package]]
 name = "wasmer"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "cfg-if",
  "indexmap 1.9.3",
@@ -1254,7 +1195,6 @@ dependencies = [
  "wasmer-artifact",
  "wasmer-compiler",
  "wasmer-compiler-cranelift",
- "wasmer-compiler-singlepass",
  "wasmer-derive",
  "wasmer-engine",
  "wasmer-engine-dylib",
@@ -1267,7 +1207,7 @@ dependencies = [
 [[package]]
 name = "wasmer-artifact"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "enumset",
  "loupe",
@@ -1279,7 +1219,7 @@ dependencies = [
 [[package]]
 name = "wasmer-compiler"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "enumset",
  "loupe",
@@ -1296,7 +1236,7 @@ dependencies = [
 [[package]]
 name = "wasmer-compiler-cranelift"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "cranelift-codegen",
  "cranelift-entity",
@@ -1313,29 +1253,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "wasmer-compiler-singlepass"
-version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
-dependencies = [
- "byteorder",
- "dynasm",
- "dynasmrt",
- "gimli 0.26.2",
- "lazy_static",
- "loupe",
- "more-asserts",
- "rayon",
- "smallvec",
- "wasmer-compiler",
- "wasmer-types",
-]
-
-[[package]]
 name = "wasmer-derive"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
- "proc-macro-error",
  "proc-macro2",
  "quote",
  "syn 1.0.109",
@@ -1344,7 +1265,7 @@ dependencies = [
 [[package]]
 name = "wasmer-engine"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "backtrace",
  "enumset",
@@ -1366,7 +1287,7 @@ dependencies = [
 [[package]]
 name = "wasmer-engine-dylib"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "cfg-if",
  "enum-iterator",
@@ -1391,7 +1312,7 @@ dependencies = [
 [[package]]
 name = "wasmer-engine-universal"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "cfg-if",
  "enumset",
@@ -1410,7 +1331,7 @@ dependencies = [
 [[package]]
 name = "wasmer-engine-universal-artifact"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "enum-iterator",
  "enumset",
@@ -1425,7 +1346,7 @@ dependencies = [
 [[package]]
 name = "wasmer-middlewares"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "loupe",
  "wasmer",
@@ -1436,7 +1357,7 @@ dependencies = [
 [[package]]
 name = "wasmer-object"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "object 0.28.4",
  "thiserror 1.0.69",
@@ -1447,7 +1368,7 @@ dependencies = [
 [[package]]
 name = "wasmer-types"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "backtrace",
  "enum-iterator",
@@ -1462,7 +1383,7 @@ dependencies = [
 [[package]]
 name = "wasmer-vm"
 version = "2.3.0"
-source = "git+https://github.com/idena-network/wasmer?rev=de83b23#de83b23da3fdac5e078410b80c012788c84c6766"
+source = "git+https://github.com/ubiubi18/wasmer?rev=aa6b6775b4fa35510b37887524e1c48c3e4da923#aa6b6775b4fa35510b37887524e1c48c3e4da923"
 dependencies = [
  "backtrace",
  "cc",
@@ -1473,7 +1394,7 @@ dependencies = [
  "lazy_static",
  "libc",
  "loupe",
- "mach",
+ "mach2",
  "memoffset",
  "more-asserts",
  "region",
