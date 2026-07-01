@@ -68,10 +68,13 @@ pub trait Backend: Copy + Clone + Send {
     fn ecrecover(&self, data : &[u8], sig : &[u8]) -> BackendResult<Vec<u8>>;
 }
 
+#[cfg(test)]
 pub struct MockBackend {}
 
+#[cfg(test)]
 impl Copy for MockBackend {}
 
+#[cfg(test)]
 impl Clone for MockBackend {
     fn clone(&self) -> Self {
         MockBackend {}
@@ -79,6 +82,7 @@ impl Clone for MockBackend {
 }
 
 #[allow(unused_variables)]
+#[cfg(test)]
 impl Backend for MockBackend {
     fn set_remaining_gas(&self, gas_limit: u64) -> BackendResult<()> {
         println!("called set_remaining_gas");

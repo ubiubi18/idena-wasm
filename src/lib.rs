@@ -12,6 +12,6 @@ mod costs;
 mod limiting_tunables;
 mod types;
 mod args;
+#[cfg(test)]
 mod tests;
 mod macros;
-

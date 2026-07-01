@@ -198,6 +198,7 @@ impl ByteSliceView {
     /// ByteSliceViews are only constructed in Go. This constructor is a way to mimic the behaviour
     /// when testing FFI calls from Rust. It must not be used in production code.
     #[cfg(test)]
+    #[allow(dead_code)]
     pub fn new(source: &[u8]) -> Self {
         Self {
             is_nil: false,
@@ -209,6 +210,7 @@ impl ByteSliceView {
     /// ByteSliceViews are only constructed in Go. This constructor is a way to mimic the behaviour
     /// when testing FFI calls from Rust. It must not be used in production code.
     #[cfg(test)]
+    #[allow(dead_code)]
     pub fn nil() -> Self {
         Self {
             is_nil: true,
