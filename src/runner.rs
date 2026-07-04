@@ -73,8 +73,14 @@ impl<B: Backend + 'static> VmRunner<B> {
 
         match info.exports.get(method) {
             Some(ExportIndex::Function(index)) => {
-                let func = info.functions.get(index.clone()).unwrap();
-                let sign = info.signatures.get(func.clone()).unwrap();
+                let func = info
+                    .functions
+                    .get(index.clone())
+                    .ok_or_else(|| VmError::custom("function metadata is not found"))?;
+                let sign = info
+                    .signatures
+                    .get(func.clone())
+                    .ok_or_else(|| VmError::custom("function signature is not found"))?;
                 params_cnt = sign.params().len();
             }
             None => return Err(VmError::custom("method is not found")),
@@ -235,9 +241,8 @@ impl<B: Backend + 'static> VmRunner<B> {
         let iter = promises.iter();
         for p in iter {
             sum = sum.saturating_add(self.get_gas_of_action(&p.action));
-            if p.action_callback.is_some() {
-                sum = sum
-                    .saturating_add(self.get_gas_of_action(&p.action_callback.as_ref().unwrap()));
+            if let Some(action_callback) = p.action_callback.as_ref() {
+                sum = sum.saturating_add(self.get_gas_of_action(action_callback));
             }
         }
         sum
@@ -433,8 +438,7 @@ impl<B: Backend + 'static> VmRunner<B> {
         p: &Promise,
         promise_result: Option<PromiseResult>,
     ) {
-        if p.action_callback.is_some() {
-            let action = p.action_callback.as_ref().unwrap().clone();
+        if let Some(action) = p.action_callback.as_ref().cloned() {
             match action {
                 Action::FunctionCall(ref call) => {
                     let mut gas_used = 0;
@@ -445,7 +449,7 @@ impl<B: Backend + 'static> VmRunner<B> {
                         &mut gas_used,
                         true,
                     );
-                    if (action_result.is_err() || !action_result.as_ref().unwrap().success)
+                    if action_result.as_ref().map_or(true, |res| !res.success)
                         && !call.deposit.is_empty()
                     {
                         // refund deposit
@@ -528,10 +532,10 @@ impl<B: Backend + 'static> VmRunner<B> {
 
         *gas_used = self.gas_limit.saturating_sub(env.get_gas_left());
 
-        if res.is_err() {
+        if let Err(err) = res {
             *gas_used = gas_used.saturating_sub(self.unused_promise_gas(env));
             return Ok(Self::action_result_from_err(
-                res.err().unwrap(),
+                err,
                 self.contact_addr.clone(),
                 input_action,
                 *gas_used,
@@ -647,10 +651,10 @@ impl<B: Backend + 'static> VmRunner<B> {
             Err(err) => Err(err),
         };
         *gas_used = self.gas_limit.saturating_sub(env.get_gas_left());
-        if res.is_err() {
+        if let Err(err) = res {
             *gas_used = gas_used.saturating_sub(self.unused_promise_gas(env));
             return Ok(Self::action_result_from_err(
-                res.err().unwrap(),
+                err,
                 self.contact_addr.clone(),
                 input_action,
                 *gas_used,

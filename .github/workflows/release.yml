@@ -53,8 +53,10 @@ jobs:
         run: choco install -y mingw
 
       - name: Build
+        env:
+          MATRIX_TARGET: ${{ matrix.target }}
         run: |
-          target="${{ matrix.target }}"
+          target="${MATRIX_TARGET}"
           if [[ -n "${target}" ]]; then
             cargo build --release --all-features --target "${target}"
           else
@@ -62,14 +64,17 @@ jobs:
           fi
 
       - name: Rename output file
+        env:
+          MATRIX_ARTIFACT_NAME: ${{ matrix.artifact_name }}
+          MATRIX_TARGET: ${{ matrix.target }}
         run: |
-          asset_name=${{ matrix.artifact_name }}
-          if [[ -n "${{ matrix.target }}" ]]; then
-            mv target/${{ matrix.target }}/release/${BINARY_NAME} ${asset_name}
+          asset_name="${MATRIX_ARTIFACT_NAME}"
+          if [[ -n "${MATRIX_TARGET}" ]]; then
+            mv "target/${MATRIX_TARGET}/release/${BINARY_NAME}" "${asset_name}"
           else
-            mv target/release/${BINARY_NAME} ${asset_name}
+            mv "target/release/${BINARY_NAME}" "${asset_name}"
           fi
-          echo "ASSET_NAME=${asset_name}" >> $GITHUB_ENV
+          echo "ASSET_NAME=${asset_name}" >> "$GITHUB_ENV"
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -88,22 +93,29 @@ jobs:
           targets: aarch64-unknown-linux-gnu
       - name: Build cross image
         run: |
-          docker build -t idena-wasm/aarch64 ${GITHUB_WORKSPACE}/.github/cross-linux-aarch64/
+          docker build -t idena-wasm/aarch64 "${GITHUB_WORKSPACE}/.github/cross-linux-aarch64/"
         env:
           CROSS_DOCKER_IN_DOCKER: true
       - name: Build idena-wasm binary
         run: |
-          ${CARGO_BINARY} build --target=aarch64-unknown-linux-gnu --release
+          docker run \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "${GITHUB_WORKSPACE}:/project" \
+            -w /project \
+            -e CROSS_DOCKER_IN_DOCKER=true \
+            -e PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig \
+            -e PKG_CONFIG_ALLOW_CROSS=true \
+            idena-wasm/aarch64 \
+            cross build --target=aarch64-unknown-linux-gnu --release
         env:
-          CARGO_BINARY: docker run -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}:/project -w /project idena-wasm/aarch64 cross
           CROSS_DOCKER_IN_DOCKER: true
           PKG_CONFIG_PATH: /usr/lib/aarch64-linux-gnu/pkgconfig
           PKG_CONFIG_ALLOW_CROSS: true
       - name: Rename output file
         run: |
           asset_name=libidena_wasm_linux_aarch64.a
-          cp target/aarch64-unknown-linux-gnu/release/${BINARY_NAME} ${asset_name}
-          echo "ASSET_NAME=${asset_name}" >> $GITHUB_ENV
+          cp "target/aarch64-unknown-linux-gnu/release/${BINARY_NAME}" "${asset_name}"
+          echo "ASSET_NAME=${asset_name}" >> "$GITHUB_ENV"
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
