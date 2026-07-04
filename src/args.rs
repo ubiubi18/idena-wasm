@@ -10,6 +10,10 @@ const ARGS_PLAIN_FORMAT: u8 = 0x0;
 pub fn convert_args(args: &[u8]) -> VmResult<Vec<proto::models::proto_args::Argument>> {
     let mut result: Vec<proto::models::proto_args::Argument>;
 
+    if args.is_empty() {
+        return Err(VmError::custom("missing arguments format"));
+    }
+
     match args[0] {
         ARGS_PROTOBUF_FORMAT => {
             result = proto::models::ProtoArgs::parse_from_bytes(&args[1..])
