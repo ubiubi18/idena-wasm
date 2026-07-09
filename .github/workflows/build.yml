@@ -3,22 +3,78 @@ name: Build
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  release:
+  build:
+    name: ${{ matrix.build }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-2025, macos-15-intel, macos-15]
+        include:
+          - build: linux-x64
+            os: ubuntu-24.04
+            artifact_name: libidena_wasm_linux_amd64.a
+            target: ''
+          - build: linux-arm64
+            os: ubuntu-24.04-arm
+            artifact_name: libidena_wasm_linux_aarch64.a
+            target: ''
+          - build: macos-x64
+            os: macos-15-intel
+            artifact_name: libidena_wasm_darwin_amd64.a
+            target: x86_64-apple-darwin
+          - build: macos-arm64
+            os: macos-15
+            artifact_name: libidena_wasm_darwin_arm64.a
+            target: aarch64-apple-darwin
+          - build: windows-x64
+            os: windows-2025
+            artifact_name: libidena_wasm_windows_amd64.a
+            target: x86_64-pc-windows-gnu
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@4be7066ada62dd38de10e7b70166bc74ed198c30 # stable
         with:
           toolchain: 1.97.0
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae # v2
+
+      - name: Install Windows GNU linker
+        if: matrix.os == 'windows-2025'
+        run: choco install -y mingw
 
       - name: Build
-        run: cargo build --release --all-features
+        env:
+          MATRIX_TARGET: ${{ matrix.target }}
+        run: |
+          if [[ -n "${MATRIX_TARGET}" ]]; then
+            cargo build --release --all-features --target "${MATRIX_TARGET}"
+            output="target/${MATRIX_TARGET}/release/libidena_wasm.a"
+          else
+            cargo build --release --all-features
+            output="target/release/libidena_wasm.a"
+          fi
+          cp "${output}" "${{ matrix.artifact_name }}"
+          openssl dgst -sha256 -r "${{ matrix.artifact_name }}" > "${{ matrix.artifact_name }}.sha256"
+
+      - name: Upload archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ matrix.build }}
+          path: |
+            ${{ matrix.artifact_name }}
+            ${{ matrix.artifact_name }}.sha256
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
