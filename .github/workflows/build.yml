@@ -59,10 +59,10 @@ jobs:
           MATRIX_TARGET: ${{ matrix.target }}
         run: |
           if [[ -n "${MATRIX_TARGET}" ]]; then
-            cargo build --release --all-features --target "${MATRIX_TARGET}"
+            cargo build --locked --release --all-features --target "${MATRIX_TARGET}"
             output="target/${MATRIX_TARGET}/release/libidena_wasm.a"
           else
-            cargo build --release --all-features
+            cargo build --locked --release --all-features
             output="target/release/libidena_wasm.a"
           fi
           cp "${output}" "${{ matrix.artifact_name }}"
