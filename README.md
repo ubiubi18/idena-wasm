@@ -11,6 +11,12 @@ by [CosmWasm wasmvm](https://github.com/CosmWasm/wasmvm).
 > distribution and not a standalone smart-contract application. There are no
 > published fork releases. Use it only with the matching binding and node pins.
 
+The exact candidate component revisions, native archive digests, and unchanged
+mainnet identifiers are vendored in
+[`compatibility/stack-lock.json`](compatibility/stack-lock.json). The dedicated
+compatibility workflow rejects any runtime-affecting change after the locked
+artifact-producing revision.
+
 ## Runtime status
 
 The crate targets Rust `1.97.0` and pins every Wasmer crate to commit
