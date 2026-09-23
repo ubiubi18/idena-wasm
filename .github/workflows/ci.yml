@@ -41,6 +41,14 @@ jobs:
       - name: Test
         run: cargo test --locked --all-targets --all-features
 
+      # Contract argument decoding must match rust-protobuf 2.27.1 exactly;
+      # see src/proto/legacy_args.rs.
+      - name: Differential test of contract argument decoding
+        working-directory: fuzz/proto-args-differential
+        run: |
+          cargo fmt -- --check
+          cargo test --locked --release
+
       - name: Install cargo-audit
         run: cargo install cargo-audit --version 0.22.2 --locked
 

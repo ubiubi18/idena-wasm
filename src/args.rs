@@ -1,5 +1,3 @@
-use protobuf::Message;
-
 use crate::errors::VmError;
 use crate::memory::VmResult;
 use crate::proto;
@@ -16,9 +14,10 @@ pub fn convert_args(args: &[u8]) -> VmResult<Vec<proto::models::proto_args::Argu
 
     match args[0] {
         ARGS_PROTOBUF_FORMAT => {
-            result = proto::models::ProtoArgs::parse_from_bytes(&args[1..])
-                .or(Err(VmError::custom("failed to parse arguments")))?
-                .args;
+            // Arguments of cross-contract calls come from contract memory, so
+            // their decoding is consensus-critical. See `legacy_args`.
+            result = proto::legacy_args::decode_proto_args(&args[1..])
+                .or(Err(VmError::custom("failed to parse arguments")))?;
         }
         ARGS_PLAIN_FORMAT => {
             let mut arg = proto::models::proto_args::Argument::new();
