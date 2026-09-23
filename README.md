@@ -14,7 +14,7 @@ by [CosmWasm wasmvm](https://github.com/CosmWasm/wasmvm).
 ## Runtime status
 
 The crate targets Rust `1.97.0` and pins every Wasmer crate to commit
-`1637dea03c0110f7dd800f2d9781193caf820074` in
+`45f9bccf49187be24874400067923abda4c037da` in
 [`ubiubi18/wasmer`](https://github.com/ubiubi18/wasmer). The Go binding records
 the exact idena-wasm and Wasmer revisions used for each checked-in archive.
 
@@ -24,6 +24,8 @@ the exact idena-wasm and Wasmer revisions used for each checked-in archive.
   engine, Singlepass, middleware, and type surfaces required by Idena.
 - Runtime dependencies and protobuf support were refreshed, while the Wasmer
   revision and Cargo lockfile remain exact inputs.
+- The Wasmer pin includes the rkyv 0.8 migration for RUSTSEC-2026-0235;
+  the lockfile resolves rkyv 0.8.18 without an advisory exception.
 - Rust formatting, clippy with warnings denied, tests, `cargo audit`, and locked
   builds run in CI.
 - Release builds enable overflow checks and produce checksummed static archives
@@ -50,6 +52,9 @@ the exact idena-wasm and Wasmer revisions used for each checked-in archive.
 - A successful unit test or `cargo audit` does not prove deterministic behavior
   for every contract. Compare known contract fixtures and node integration
   tests before distributing new archives.
+- Wasmer's compiled metadata ABI is now version 2. Old compiled-module caches
+  must be rebuilt from original Wasm. The runner compiles raw Wasm; this does
+  not change the contract-argument format or prove node replay compatibility.
 - Static archives are platform and architecture specific. Linking the wrong
   archive or mixing GNU/MSVC assumptions can fail at build time or, worse,
   produce an unreviewed runtime.
