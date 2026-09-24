@@ -1,0 +1,16 @@
+# Differential test for consensus-critical argument decoding.
+#
+# Kept outside the idena-wasm build so that the legacy rust-protobuf 2 oracle
+# (affected by RUSTSEC-2024-0437) never enters the release lockfile.
+[package]
+name = "proto-args-differential"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.97.0"
+publish = false
+
+[workspace]
+
+[dependencies]
+protobuf = "=3.7.2"
+protobuf_legacy = { package = "protobuf", version = "=2.27.1" }
