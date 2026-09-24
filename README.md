@@ -1,5 +1,9 @@
 # Idena Wasm
 
+## Research disclaimer
+
+This is experimental research software. I cannot guarantee its security, correctness, or fitness for any purpose. Use it at your own risk, take responsibility for your decisions, independently verify changes, and stay vigilant.
+
 Static WebAssembly smart-contract runtime used by `idena-go` through
 `idena-wasm-binding`. It wraps a compatibility fork of Wasmer and is inspired
 by [CosmWasm wasmvm](https://github.com/CosmWasm/wasmvm).
